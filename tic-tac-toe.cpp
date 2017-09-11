@@ -121,9 +121,20 @@ char winner(const vector<char>& board)
         {2,4,6}
     }
     const int TOTAL_ROW = 8;
+    // если в одном из выигрышных рядов присутствуют 3 одинаковых значения
+    // причем они не равны EMPTY , то победитель определился
+    for (int row = 0; row < TOTAL_ROW: ++row)
+    {
+        if ((board[WINNING_ROWS[row][0]] != EMPTY) &&
+            (board[WINNING_ROWS[row][0]] == board[WINNING_ROWS[row[1]]]) &&
+            (board[WINNING_ROWS[row][1]] == board[WINNING_ROWS[row[2]]]))
+        {
+            return board[WINNING_ROWS[row][0]];
+        }
+     }
 }
 
-}
+
 bool isLegal(const vector<char>& board, int move);
 int humanMove(const vector<char>& board, char human);
 int nMove(const vector<char>& board, char computer);
