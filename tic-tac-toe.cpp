@@ -27,9 +27,9 @@ char humanPiece();
 char opponent(char piece);
 void displayBoard(const vector<char>& board);
 char winner(const vector<char>& board);
-bool isLegal(const vector<char>& board, int move);
+bool isLegal(int move, const vector<char>& board);
 int humanMove(const vector<char>& board, char human);
-int nMove(const vector<char>& board, char computer);
+int computerMove(vector<char>& board, char computer);
 void announceWinner(char winner, char computer, char human);
 
 int main(int args, char *argv[])
@@ -75,7 +75,7 @@ char askYesNo(string question)
     } while(response != 'y' || response != 'n');
     return response;
 }
-int askNumber(string question, int high, int low=0)
+int askNumber(string question, int high, int low)
 {
     int number;
     do
@@ -88,7 +88,10 @@ int askNumber(string question, int high, int low=0)
 
 char humanPiece()
 {
-    vector<char> OX = {O, X};
+    vector<char> OX;
+    OX.push_back(O);
+    OX.push_back(X);
+
     random_shuffle(OX.begin(), OX.end());
     return OX[0];
 }
@@ -98,6 +101,7 @@ char opponent(char piece)
         return O;
     else
         return X;
+}
 void displayBoard(const vector<char>& board)
 {
     cout << "\n\t" << board[0] << " | " << board[1] << " | " << board[2];
@@ -119,23 +123,96 @@ char winner(const vector<char>& board)
         {2,5,8},
         {0,4,8},
         {2,4,6}
-    }
+    };
     const int TOTAL_ROW = 8;
     // если в одном из выигрышных рядов присутствуют 3 одинаковых значения
     // причем они не равны EMPTY , то победитель определился
-    for (int row = 0; row < TOTAL_ROW: ++row)
+    for (int row = 0; row < TOTAL_ROW; ++row)
     {
         if ((board[WINNING_ROWS[row][0]] != EMPTY) &&
-            (board[WINNING_ROWS[row][0]] == board[WINNING_ROWS[row[1]]]) &&
-            (board[WINNING_ROWS[row][1]] == board[WINNING_ROWS[row[2]]]))
+            (board[WINNING_ROWS[row][0]] == board[WINNING_ROWS[row][1]]) &&
+            (board[WINNING_ROWS[row][1]] == board[WINNING_ROWS[row][2]]))
         {
             return board[WINNING_ROWS[row][0]];
         }
      }
+    // поскольку победитель не определился, но и ни ничья еще не наступила
+    // игра продолжается
+    return NO_ONE;
 }
 
+bool isLegal(int move, const vector<char>& board)
+{
+    return (board[move] == EMPTY);
+}
+int humanMove(const vector<char>& board, char human)
+{
+    int move = askNumber("В какую клетку поставить?" , (board.size() - 1));
+    while (!isLegal(move, board))
+    {
+        cout << "\nКлетка занята\n";
+        move = askNumber("В какую клетку поставить?" , (board.size() - 1));
+    }
+    cout << "Хорошо...\n";
+    return move;
+}
+int computerMove(vector<char>& board, char computer)
+{
+    unsigned int move = 0;
+    bool found = false;
+    // если комп может выиграть следующим ходом, то он это сделает
+    while (!found && move < board.size())
+    {
+        if (isLegal(move, board))
+        {
+            board[move] = computer;
+            found = (winner(board) == computer);
+            board[move] = EMPTY;
+        }
+        if(!found)
+            ++move;
+    }
+    // Если человек следующим ходом может победить - блокировать этот ход
+    if(!found)
+    {
+        move = 0;
+        char human = opponent(computer);
+        while(!found && move < board.size())
+        {
+            if(isLegal(move, board))
+            {
+                board[move] = human;
+                found = winner(board) == human;
+                board[move] = EMPTY;
+            }
+            if(!found)
+                ++move;
+        }
+    }
+    // иначе занять следующим ходом оптимальную свободную клетку
+    move = 0;
+    unsigned int i = 0;
+    const int BEST_MOVES[] = {4,0,2,6,8,1,3,5,7};
+    // выбрать оптимальную свободную клетку
+    while(!found && i < board.size())
+    {
+        move = BEST_MOVES[i];
+        if(isLegal(move, board))
+            found = true;
+        ++i;
+    }
+    cout << "Я занял клетку " << move << endl;
+    return move;
+}
+void announceWinner(char winner, char computer, char human)
+{
+    if(winner == computer)
+    {
+        cout << winner << " победил!\n";
+    }
+    else if(winner == human)
+        cout << winner << " победил!\n";
+    else
+        cout << "НИЧЬЯ" << endl;
 
-bool isLegal(const vector<char>& board, int move);
-int humanMove(const vector<char>& board, char human);
-int nMove(const vector<char>& board, char computer);
-void announceWinner(char winner, char computer, char human);
+}
