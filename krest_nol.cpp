@@ -26,7 +26,7 @@ void computerGo(char* const pole, char player, char computer);
 
 int main(int args, char *argv[])
 {
-    clear();
+    clear();   
     cout << "\t\tИгра Крестики-Нолики\n";
     cout << "\nПравила: для победы необходимо поставить 3 символа в ряд или"
         " по диаганали\n";
@@ -81,7 +81,9 @@ void clear()
     if(sys == 1)
         system("clear");
     else
+    {
         system("cls");
+    }
 }
 void sleep(int sec)
 {
