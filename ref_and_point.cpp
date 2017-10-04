@@ -4,6 +4,10 @@
 // указатели и ссылки разбор полетов
 
 #include <iostream>
+#include <string>
+using std::string;
+using std::getline; // принимает строку с пробелами
+
 using namespace std;
 
 void copy_func(int x, int y);   // передача копирование
@@ -15,6 +19,7 @@ void const_point_func(const int* x, const int* y);  // указатель на �
 void const_point_func2(int* const x, int* const y);
 // константный указатель на константу
 void const_point_func3(const int* const x, const int* const y);
+void string_ref_point(string* str_point, string& str_ref, string str_copy);
 
 int main(int args, char *argv[])
 {
@@ -51,7 +56,11 @@ int main(int args, char *argv[])
     cout << "number2 = " << number2 << endl;
     cout << "Итого: константный указатель = ссылка, а ссылка на костанту ="
         " константный указатель на костанту\n";
-
+	string str1, str2, str3;
+	str1 = "point";
+	str2 = "ref";
+	str3 = "copy";
+	string_ref_point(&str1, str2, str3);
 
     return 0;
 }
@@ -89,4 +98,10 @@ void const_point_func2(int* const x, int* const y)
     cout << "into const_point_func2" << endl;
     *x += 1;
     *y += 1;
+}
+void string_ref_point(string* str_point, string& str_ref, string str_copy)
+{
+	cout << *str_point << endl;
+	cout << str_ref << endl;
+	cout << str_copy << endl;	
 }
